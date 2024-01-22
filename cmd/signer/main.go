@@ -57,15 +57,20 @@ func main() {
 
 	wg.Add(1)
 	go signaling.HandleSignals(ctx, func(c context.Context) {
+		defer wg.Done() // indicate Done for WG no matter what
 		logger.Info("Stop command received, finishing all jobs")
 		if err := srv.StopServer(c); err != nil {
 			logger.Error(err.Error())
 		}
 		logger.Info("Stopped web server job")
-		_ = storage.Disconnect()
-		logger.Info("Closed db")
+
 		ctxClose()
-		wg.Done()
+		logger.Info("Context closed")
+
+		if err := storage.Disconnect(); err != nil {
+			logger.Error(err.Error())
+		}
+		logger.Info("Closed db")
 	})
 
 	logger.Info("Starting web server job")
