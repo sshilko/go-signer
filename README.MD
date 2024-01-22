@@ -32,6 +32,18 @@ This app is an example web service app:
 
 `go test -race -v ./...`
 
+### CI/CD
+
+```
+# build web server binary container
+docker build . -t signer -f cmd/signer/Dockerfile
+docker run -it signer
+
+# build worker binary container
+docker build . -t signer-worker -f cmd/worker/Dockerfile
+docker run -it signer-worker
+```
+
 ### Cleanup DB [nutsdb](https://github.com/nutsdb/nutsdb) is fs-backed
 
 ```
